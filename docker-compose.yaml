@@ -1,0 +1,12 @@
+services:
+  ## Controller Go2
+  go2_ctrl_server:
+    build: '.'
+    container_name: go2_ctrl_server
+    restart: on-failure
+    network_mode: host
+    user: root
+    ports:
+      - "4888:4888"
+      - "1440:1440"
+    # #   - "9991:9991"
