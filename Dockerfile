@@ -10,6 +10,7 @@ RUN apt-get install python3-pip -y
 RUN apt-get install portaudio19-dev -y
 RUN apt-get install python3-venv -y
 RUN apt-get install -y libgl1 libglib2.0-0
+RUN apt-get install git -y
 
 # RUN apt-get update && apt-get install -y \
 #     python3 \
@@ -23,12 +24,13 @@ RUN apt-get install -y libgl1 libglib2.0-0
 #     dnsutils \
 #     curl
 
-COPY . .
-
+RUN git clone --recurse-submodules https://github.com/Velt1/go2_webrtc_connect.git
+# move ./go2_webrtc_connect/start.sh to /app/acuda_ac
+RUN mv ./go2_webrtc_connect/start.sh ./start.sh
 # Set up a Python virtual environment and install Python dependencies
 RUN python3 -m venv /app/venv
 RUN /app/venv/bin/pip install --upgrade pip
-RUN /app/venv/bin/pip install -e .
+RUN /app/venv/bin/pip install -e ./go2_webrtc_connect
 RUN /app/venv/bin/pip install requests wasmtime
 
 # Make start.sh executable
