@@ -9,4 +9,4 @@ echo "Contents of /app/acuda_ac/go2_webrtc_connect:"
 ls -la /app/acuda_ac/go2_webrtc_connect 
 . /app/venv/bin/activate 
 
-exec python3 /app/acuda_ac/go2_webrtc_connect/main.py
+exec python3 -u /app/acuda_ac/go2_webrtc_connect/main.py

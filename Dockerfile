@@ -11,6 +11,9 @@ RUN apt-get install portaudio19-dev -y
 RUN apt-get install python3-venv -y
 RUN apt-get install -y libgl1 libglib2.0-0
 RUN apt-get install git -y
+RUN apt-get install -y iputils-ping
+ENV PYTHONUNBUFFERED=1
+
 
 # RUN apt-get update && apt-get install -y \
 #     python3 \
@@ -23,7 +26,6 @@ RUN apt-get install git -y
 #     iputils-ping \
 #     dnsutils \
 #     curl
-
 RUN git clone --recurse-submodules https://github.com/Velt1/go2_webrtc_connect.git
 # move ./go2_webrtc_connect/start.sh to /app/acuda_ac
 RUN mv ./go2_webrtc_connect/start.sh ./start.sh
