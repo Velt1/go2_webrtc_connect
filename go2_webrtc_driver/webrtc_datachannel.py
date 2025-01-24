@@ -94,7 +94,11 @@ class WebRTCDataChannel:
         elif msg_type == DATA_CHANNEL_TYPE["HEARTBEAT"]:
             self.heartbeat.handle_response(msg)
         elif msg_type in {DATA_CHANNEL_TYPE["ERRORS"], DATA_CHANNEL_TYPE["ADD_ERROR"], DATA_CHANNEL_TYPE["RM_ERROR"]}:
-            handle_error(msg)
+            try:
+                handle_error(msg)
+            except Exception as e:
+                logging.error(f"Failed to handle error message: {msg}")
+                logging.error(f"Error details: {str(e)}")
         elif msg_type == DATA_CHANNEL_TYPE["ERR"]:
             await self.validaton.handle_err_response(msg)
         

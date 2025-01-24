@@ -108,6 +108,9 @@ class WebRTCDataChannelPubSub:
         if options and "data" in options:
             request_payload["parameter"] = options["data"] if isinstance(options["data"], str) else json.dumps(options["data"])
 
+        # if options and "parameter" in options:
+        #     request_payload["parameter"] = options["parameter"] if isinstance(options["parameter"], str) else json.dumps(options["parameter"])
+
         # Add priority if specified
         if options and "priority" in options:
             request_payload["header"]["policy"] = {

@@ -15,7 +15,7 @@ from .util import fetch_public_key, fetch_token, fetch_turn_server_info, print_s
 from .multicast_scanner import discover_ip_sn
 
 # # Enable logging for debugging
-#logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 class Go2WebRTCConnection:
     def __init__(self, connectionMethod: WebRTCConnectionMethod, serialNumber=None, ip=None, username=None, password=None) -> None:
@@ -36,6 +36,7 @@ class Go2WebRTCConnection:
         elif self.connectionMethod == WebRTCConnectionMethod.LocalSTA:
             if not self.ip and self.sn:
                 discovered_ip_sn_addresses = discover_ip_sn()
+                
                 if discovered_ip_sn_addresses:
                     if self.sn in discovered_ip_sn_addresses:
                         self.ip = discovered_ip_sn_addresses[self.sn]
@@ -104,7 +105,7 @@ class Go2WebRTCConnection:
 
         self.datachannel = WebRTCDataChannel(self, self.pc)
 
-        self.audio = WebRTCAudioChannel(self.pc, self.datachannel)
+        #self.audio = WebRTCAudioChannel(self.pc, self.datachannel)
         self.video = WebRTCVideoChannel(self.pc, self.datachannel)
 
         @self.pc.on("icegatheringstatechange")
@@ -129,7 +130,6 @@ class Go2WebRTCConnection:
                 print_status("ICE Connection State", "🔴 failed")
             elif state == "closed":
                 print_status("ICE Connection State", "⚫ closed")
-                
 
 
         @self.pc.on("connectionstatechange")
@@ -164,11 +164,12 @@ class Go2WebRTCConnection:
         async def on_track(track):
             logging.info("Track recieved: %s", track.kind)
 
-            # if track.kind == "video":
-            #     #await for the first frame, #ToDo make the code more nicer
-            #     frame = await track.recv()
-            #     await self.video.track_handler(track)
+            if track.kind == "video":
+                #await for the first frame, #ToDo make the code more nicer
+                frame = await track.recv()
+                await self.video.track_handler(track)
                 
+            # Audio without Audio Module leads to a crash!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             # if track.kind == "audio":
             #     frame = await track.recv()
             #     while True:
