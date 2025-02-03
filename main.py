@@ -37,6 +37,9 @@ class RobotServer:
             self.clients.remove(writer)
             writer.close()
             print("Client getrennt")
+            if (self.conn):
+                await self.conn.disconnect();
+                self.conn = None
 
     async def process_message(self, message, writer):
         print(f"Nachricht empfangen: {message}")

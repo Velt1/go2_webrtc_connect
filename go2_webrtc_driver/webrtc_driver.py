@@ -24,11 +24,13 @@ class Go2WebRTCConnection:
         self.ip = ip
         self.connectionMethod = connectionMethod
         self.isConnected = False
+        self.stop_traffic = False
         self.token = fetch_token(username, password) if username and password else ""
         self.on_reconnected = None
 
     async def connect(self):
         print_status("WebRTC connection", "🟡 started")
+        self.stop_traffic = False
         if self.connectionMethod == WebRTCConnectionMethod.Remote:
             self.public_key = fetch_public_key()
             turn_server_info = fetch_turn_server_info(self.sn, self.token, self.public_key)
@@ -51,14 +53,17 @@ class Go2WebRTCConnection:
             await self.init_webrtc(ip=self.ip)
     
     async def disconnect(self):
+        self.stop_traffic = True
+        self.isConnected = False
         if self.pc:
             await self.pc.close()
             self.pc = None
-        self.isConnected = False
         print_status("WebRTC connection", "🔴 disconnected")
 
     async def reconnect(self):
-        await self.disconnect()
+        if self.pc:
+            await self.pc.close()
+            self.pc = None
         await self.connect()
         print_status("WebRTC connection", "🟢 reconnected")
         if self.on_reconnected:
@@ -143,10 +148,12 @@ class Go2WebRTCConnection:
             elif state == "closed":
                 self.isConnected= False
                 print_status("Peer Connection State", "⚫ closed")
-                asyncio.create_task(self.reconnect())
+                if not self.stop_traffic:
+                    asyncio.create_task(self.reconnect())
             elif state == "failed":
                 print_status("Peer Connection State", "🔴 failed")
-                asyncio.create_task(self.reconnect())
+                if not self.stop_traffic:
+                    asyncio.create_task(self.reconnect())
         
         @self.pc.on("signalingstatechange")
         async def on_signaling_state_change():
